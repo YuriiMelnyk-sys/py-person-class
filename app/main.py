@@ -4,25 +4,21 @@ class Person:
     def __init__(self, name: str, age: int) -> None:
         self.name = name
         self.age = age
-        # додаємо у словник класу
         Person.people[self.name] = self
 
 
 def create_person_list(people: list[dict]) -> list[Person]:
-    result = []
+    # створюємо всіх людей через list comprehension
+    result = [Person(p["name"], p["age"]) for p in people]
 
-    # 1. створюємо всіх людей
+    # встановлюємо зв’язки
     for person in people:
-        new_person = Person(person["name"], person["age"])
-        result.append(new_person)
+        wife = person.get("wife")
+        if wife:
+            Person.people[person["name"]].wife = Person.people[wife]
 
-    # 2. встановлюємо зв’язки
-    for person in people:
-        if "wife" in person and person["wife"] is not None:
-            Person.people[person["name"]].wife = Person.people[person["wife"]]
-
-        if "husband" in person and person["husband"] is not None:
-            Person.people[person["name"]].husband = Person.people[
-                person["husband"]]
+        husband = person.get("husband")
+        if husband:
+            Person.people[person["name"]].husband = Person.people[husband]
 
     return result
